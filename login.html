@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            position: relative;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>用户登录</h2>
+        <form id="loginForm" onsubmit="return validateForm(event)">
+            <div class="form-group">
+                <input type="text" placeholder="用户名" id="username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" placeholder="密码" id="password" required>
+            </div>
+            <div class="error-message" id="errorMsg">用户名或密码错误！</div>
+            <button type="submit">立即登录</button>
+        </form>
+    </div>
+
+    <script>
+        function validateForm(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if(username === '123456' && password === '123456') {
+                window.location.href = '3.28.html';
+            } else {
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 2000);
+            }
+        }
+    </script>
+    <canvas id="particleCanvas" style="position: fixed; top: 0; left: 0; z-index: 1;"></canvas>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 粒子动画脚本
+            (function() {
+                const canvas = document.getElementById('particleCanvas');
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const particleCount = 80;
+    
+                function resize() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+    
+                function createParticles() {
+                    particles = [];
+                    for(let i = 0; i < particleCount; i++) {
+                        particles.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            vx: (Math.random() - 0.5) * 0.8,
+                            vy: (Math.random() - 0.5) * 0.8,
+                            radius: Math.random() * 1.5 + 0.5,
+                            hue: Math.random() * 360
+                        });
+                    }
+                }
+    
+                function draw() {
+                    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+    
+                        if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                        if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsla(${p.hue}, 70%, 50%, 0.8)`;
+                        ctx.fill();
+    
+                        p.hue = (p.hue + 0.5) % 360;
+                    });
+    
+                    requestAnimationFrame(draw);
+                }
+    
+                canvas.addEventListener('mousemove', e => {
+                    particles.forEach(p => {
+                        const dx = e.clientX - p.x;
+                        const dy = e.clientY - p.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 100) {
+                            p.vx += dx * 0.008;
+                            p.vy += dy * 0.008;
+                        }
+                    });
+                });
+    
+                window.addEventListener('resize', () => {
+                    resize();
+                    createParticles();
+                });
+    
+                resize();
+                createParticles();
+                draw();
+            })();
+        });
+    </script>
+</body>
+</html>
